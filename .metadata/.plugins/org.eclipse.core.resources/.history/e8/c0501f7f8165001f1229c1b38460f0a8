@@ -1,0 +1,54 @@
+package com.example.demo.controller;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+
+import com.example.demo.Chat.ChatGPTRequest;
+import com.example.demo.Chat.ChatGPTResponse;
+
+@RestController
+public class ChatController {
+
+    private final RestTemplate restTemplate;
+    
+    @Value("${openai.api.url}")
+    private String openAiUrl; // application.properties에서 읽어온 OpenAI API URL
+
+    @Value("${openai.api.key}")
+    private String openAiApiKey; // application.properties에서 읽어온 OpenAI API Key
+
+    public ChatController(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
+    @PostMapping("/chat")
+    public ResponseEntity<ChatGPTResponse> chat(@RequestBody ChatGPTRequest request) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + openAiApiKey); // API 키 설정
+        headers.set("Content-Type", "application/json");
+        
+        HttpEntity<ChatGPTRequest> entity = new HttpEntity<>(request, headers);
+
+        ResponseEntity<ChatGPTResponse> response = restTemplate.exchange(
+            openAiUrl, // OpenAI API URL 사용
+            HttpMethod.POST,
+            entity,
+            ChatGPTResponse.class
+        );
+
+        return response;
+    }
+    
+    @GetMapping("/health")
+    public String healthCheck() {
+        return "채팅 서비스가 정상적으로 실행 중입니다.";
+    }
+}

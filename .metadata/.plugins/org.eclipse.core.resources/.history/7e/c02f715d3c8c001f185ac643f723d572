@@ -1,0 +1,72 @@
+package com.example.demo.Service;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+
+import com.example.demo.Entity.UserEntity;
+import com.example.demo.Map.StatEntity;
+import com.example.demo.Map.StatRepository;
+import com.example.demo.Repository.UserRepository;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class StatCheckService {
+
+    private final StatRepository statRepository; // stat 값을 조회하기 위한 repository
+    private final UserRepository userRepository; // 유저 정보 조회를 위한 repository
+    private final PhoneService phoneService;     // 문자 발송을 위한 service
+
+    private Timer timer = new Timer(); // 타이머 객체 생성
+
+    /**
+     * API 호출 시 일정 시간마다 stat 값이 변경되었는지 확인하고, 조건이 충족되면 타이머 종료
+     */
+    public void checkStatPeriodically(String username, int statId) {
+        timer = new Timer(); // 새로운 타이머 객체 생성
+
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                boolean isStatUpdated = checkStatAndSendSms(username, statId);
+
+                if (isStatUpdated) {
+                    // stat 값이 변경되었으면 타이머 중지
+                    timer.cancel();
+                    timer.purge(); // 타이머 작업 정리
+                    System.out.println("타이머 중지");
+                }
+            }
+        };
+
+        System.out.println("검사 시작");
+        // 5분(300,000밀리초)마다 실행
+        timer.schedule(task, 0, 3000); // 처음 즉시 실행하고, 이후 5분마다 실행
+    }
+
+    /**
+     * username과 stat id를 받아 stat 값이 2에서 3으로 변경되었는지 확인하고 문자를 발송하는 메서드
+     */
+    public boolean checkStatAndSendSms(String username, int statId) {
+        // stat 값 조회
+        StatEntity stat = statRepository.findById(statId).orElseThrow(() -> new IllegalArgumentException("Stat not found"));
+
+        // stat 값이 2에서 3으로 변경되었는지 확인
+        if ("3".equals(stat.getStat())) {
+            // username을 통해서 phone 조회
+            UserEntity user = userRepository.findByUsername(username).orElseThrow(() -> new IllegalArgumentException("User not found"));
+            String phoneNumber = user.getPhone();
+
+            // 문자 발송
+            phoneService.sendOne4(phoneNumber);
+
+            return true;
+        }
+
+        return false;
+    }
+}

@@ -1,0 +1,7 @@
+package com.example.demo.Repository;
+
+public interface UserRepository extends JpaRepository<UserEntity, Long> {
+
+    // username으로 사용자 검색
+    UserEntity findByUsername(String username);
+}

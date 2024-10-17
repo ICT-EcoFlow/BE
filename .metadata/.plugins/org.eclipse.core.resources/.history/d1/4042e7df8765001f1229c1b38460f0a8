@@ -1,0 +1,11 @@
+package com.example.demo.Chat;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@AllArgsConstructor
+@Data
+static class Message {
+    String role;
+    String content;
+}

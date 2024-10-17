@@ -1,0 +1,70 @@
+package com.example.demo.Service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.demo.DTO.UserchergerDTO;
+import com.example.demo.Entity.UserchergerEntity;
+import com.example.demo.Repository.UserchergerRepository;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class UserchergerService {
+
+    @Autowired
+    private UserchergerRepository userchergerRepository;
+
+    // 데이터 저장
+    public void saveUsercherger(UserchergerDTO userchergerDTO) {
+        // DTO를 엔티티로 변환하여 데이터베이스에 저장 (id는 자동으로 생성됨)
+        UserchergerEntity userchergerEntity = UserchergerEntity.touserchergerEntity(userchergerDTO);
+        userchergerEntity.setId(null);  // id 값은 null로 설정하여 자동 증가되도록
+        userchergerEntity.setStat("2");
+        userchergerRepository.save(userchergerEntity);
+    }
+
+    // 모든 유저 정보를 가져오는 메서드
+    public List<UserchergerDTO> getAllUserChargerInfo() {
+        List<UserchergerEntity> entityList = userchergerRepository.findAll();
+        return entityList.stream()
+                .map(UserchergerDTO::toUserchergerDTO)
+                .collect(Collectors.toList());
+    }
+
+    // 특정 유저 정보 가져오기
+    public List<UserchergerDTO> getUserChargerByUsername(String username) {
+        List<UserchergerEntity> entityList = userchergerRepository.findByUserId(username);
+        return entityList.stream()
+                .map(UserchergerDTO::toUserchergerDTO)
+                .collect(Collectors.toList());
+    }
+
+    // 충전기의 stat 값을 2에서 3으로, 3에서 2로 변경하는 메서드
+    public void updateChargerStat(Integer id) {
+        // id로 해당 충전기 정보 찾기
+        UserchergerEntity userchergerEntity = userchergerRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Charger not found"));
+
+        // stat 값 변경 (2 -> 3, 3 -> 2)
+        if ("2".equals(userchergerEntity.getStat())) {
+            userchergerEntity.setStat("3");
+        } else if ("3".equals(userchergerEntity.getStat())) {
+            userchergerEntity.setStat("2");
+        }
+
+        // 변경된 정보 저장
+        userchergerRepository.save(userchergerEntity);
+    }
+    
+    // 충전기 삭제
+    public void deleteUserchergerById(Integer id) {
+        if (userchergerRepository.existsById(id)) {
+            userchergerRepository.deleteById(id);
+        } else {
+            throw new RuntimeException("Charger with id " + id + " not found");
+        }
+    }
+
+}

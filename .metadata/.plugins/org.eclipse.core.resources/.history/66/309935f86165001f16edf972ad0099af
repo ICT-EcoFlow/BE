@@ -1,0 +1,15 @@
+package com.example.demo.DTO;
+
+
+
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+@Setter
+@ToString
+public class LoginRequestDTO {
+
+    private String username;
+    private String password;
+
+    // Getters and Setters
+}

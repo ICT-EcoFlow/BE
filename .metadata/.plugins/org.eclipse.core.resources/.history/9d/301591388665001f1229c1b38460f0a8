@@ -1,0 +1,39 @@
+package com.example.demo.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+
+import com.example.demo.Chat.ChatGPTRequest;
+import com.example.demo.Chat.ChatGPTResponse;
+
+@RestController
+@RequestMapping("/chat")
+public class ChatController {
+	
+    @Autowired
+    private RestTemplate template;
+	
+	
+    @Value("${openai.model}")
+    private String model;
+
+    @Value("${openai.api.url}")
+    private String apiURL;
+    
+    @GetMapping("/gpt")
+    public String chat(){
+        ChatGPTRequest request = new ChatGPTRequest(model, "안녕");
+        ChatGPTResponse chatGPTResponse =  template.postForObject(apiURL, request, ChatGPTResponse.class);
+        String content = chatGPTResponse.getChoices().get(0).getMessage().getContent();
+        System.out.println(content);
+        
+        return content;
+        
+    }
+
+
+}

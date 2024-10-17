@@ -1,0 +1,46 @@
+package com.example.demo.controller;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+
+import com.example.demo.Chat.ChatGPTRequest;
+import com.example.demo.Chat.ChatGPTResponse;
+
+@RestController
+@RequestMapping("/api/chat")
+public class ChatController {
+
+    @Value("${openai.api.url}")
+    private String openAiUrl;
+
+    private final RestTemplate restTemplate;
+
+    public ChatController(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
+    @PostMapping("/send")
+    public ChatGPTResponse sendMessage(@RequestBody ChatGPTRequest request) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json");
+
+        HttpEntity<ChatGPTRequest> entity = new HttpEntity<>(request, headers);
+
+        ResponseEntity<ChatGPTResponse> response = restTemplate.exchange(
+                openAiUrl,
+                HttpMethod.POST,
+                entity,
+                ChatGPTResponse.class
+        );
+
+        return response.getBody();
+    }
+}

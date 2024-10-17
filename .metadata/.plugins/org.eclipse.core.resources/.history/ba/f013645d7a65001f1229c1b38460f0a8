@@ -1,0 +1,32 @@
+package com.example.demo.News;
+
+
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+
+import java.util.List;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import lombok.Builder;
+
+
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+@Setter
+@ToString
+public class NewsDTO {
+
+
+    private String title;
+    private String link;
+    private String description;
+    private String pubDate;
+
+}

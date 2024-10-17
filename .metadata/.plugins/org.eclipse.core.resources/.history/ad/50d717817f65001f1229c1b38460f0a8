@@ -1,0 +1,49 @@
+package com.example.demo.controller;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+
+import com.example.demo.Chat.ChatGPTRequest;
+import com.example.demo.Chat.ChatGPTResponse;
+
+@RestController
+@RequestMapping("/chat")
+public class ChatController {
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Value("${openai.api.url}")
+    private String openAiUrl;
+
+    @PostMapping("/message")
+    public ResponseEntity<String> sendMessage(@RequestBody ChatGPTRequest request) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + "your_openai_api_key"); // 실제 API 키로 변경
+        headers.set("Content-Type", "application/json");
+
+        HttpEntity<ChatGPTRequest> entity = new HttpEntity<>(request, headers);
+
+        ResponseEntity<ChatGPTResponse> response = restTemplate.exchange(
+                openAiUrl,
+                HttpMethod.POST,
+                entity,
+                ChatGPTResponse.class
+        );
+
+        // Response 처리
+        if (response.getStatusCode().is2xxSuccessful()) {
+            return ResponseEntity.ok(response.getBody().toString());
+        } else {
+            return ResponseEntity.status(response.getStatusCode()).body("Error occurred");
+        }
+    }
+}

@@ -1,0 +1,21 @@
+package com.example.demo.Service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class AuthService {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    public LoginResponse authenticateUser(LoginRequest loginRequest) {
+        UserEntity user = userRepository.findByUsername(loginRequest.getUsername());
+
+        if (user != null && user.getPassword().equals(loginRequest.getPassword())) {
+            return new LoginResponse("Success", "User logged in successfully");
+        } else {
+            return new LoginResponse("Failure", "Invalid username or password");
+        }
+    }
+}

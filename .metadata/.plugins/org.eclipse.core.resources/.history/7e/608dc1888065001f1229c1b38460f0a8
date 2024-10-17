@@ -1,0 +1,50 @@
+package com.example.demo.controller;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+
+import com.example.demo.Chat.ChatGPTRequest;
+import com.example.demo.Chat.ChatGPTResponse;
+
+@RestController
+public class ChatController {
+
+    private final RestTemplate restTemplate;
+    
+    @Value("${openai.api.url}")
+    private String openAiUrl; // Ensure this property is set in your application.properties or application.yml
+
+    public ChatController(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
+    @PostMapping("/chat")
+    public ResponseEntity<ChatGPTResponse> chat(@RequestBody ChatGPTRequest request) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + "your_openai_api_key_here");
+        headers.set("Content-Type", "application/json");
+        
+        HttpEntity<ChatGPTRequest> entity = new HttpEntity<>(request, headers);
+
+        ResponseEntity<ChatGPTResponse> response = restTemplate.exchange(
+            openAiUrl,
+            HttpMethod.POST,
+            entity,
+            ChatGPTResponse.class
+        );
+
+        return response;
+    }
+    
+    @GetMapping("/health")
+    public String healthCheck() {
+        return "Chat service is running";
+    }
+}

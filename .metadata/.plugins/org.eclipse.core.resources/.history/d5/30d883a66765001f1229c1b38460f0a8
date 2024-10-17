@@ -1,0 +1,43 @@
+package com.example.demo.Service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.demo.DTO.LoginRequestDTO;
+import com.example.demo.DTO.LoginResponseDTO;
+import com.example.demo.DTO.SignUpRequestDTO;
+import com.example.demo.Entity.UserEntity;
+import com.example.demo.Repository.UserRepository;
+
+@Service
+public class AuthService {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    public LoginResponseDTO authenticateUser(LoginRequestDTO loginRequest) {
+        UserEntity user = userRepository.findByUsername(loginRequest.getUsername());
+
+        if (user != null && user.getPassword().equals(loginRequest.getPassword())) {
+            return new LoginResponseDTO("Success", "User logged in successfully");
+        } else {
+            return new LoginResponseDTO("Failure", "Invalid username or password");
+        }
+    }
+    
+    public void registerUser(SignUpRequestDTO signUpRequest) {
+        // 새 사용자 객체 생성
+        UserEntity user = new UserEntity();
+        user.setUsername(signUpRequest.getUsername());
+        user.setPassword(signUpRequest.getPassword()); // 실제 배포 시에는 비밀번호를 해시 처리해야 합니다.
+        user.setNickname(signUpRequest.getNickname());
+        user.setCar(signUpRequest.getCar());
+        user.setCarnickname(signUpRequest.getCarnickname());
+
+        // 데이터베이스에 사용자 저장
+        userRepository.save(user);
+    }
+    
+    
+    
+}

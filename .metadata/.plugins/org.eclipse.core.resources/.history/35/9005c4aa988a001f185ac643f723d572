@@ -1,0 +1,42 @@
+package com.example.demo.OAuth;
+
+import java.util.Map;
+
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@RequestMapping("/oauth2")
+public class OAuth2Controller {
+
+    @GetMapping("/loginSuccess")
+    public String loginSuccess(@AuthenticationPrincipal OAuth2User oauth2User, Model model) {
+        // 사용자 정보를 가져옴
+        String name = oauth2User.getAttribute("name");
+        String email = oauth2User.getAttribute("email");
+
+        // 네이버의 경우 "response" 내부에 존재
+        if (oauth2User.getAttributes().containsKey("response")) {
+            Map<String, Object> response = (Map<String, Object>) oauth2User.getAttributes().get("response");
+            name = (String) response.get("name");
+            email = (String) response.get("email");
+        }
+
+        // 유저 정보를 모델에 담아 프론트엔드로 전달
+        model.addAttribute("name", name);
+        model.addAttribute("email", email);
+
+        // 로그인 성공 후 원하는 페이지로 이동
+        return "loginSuccess";
+    }
+
+    @GetMapping("/loginFailure")
+    public String loginFailure() {
+        // 로그인 실패 시 처리할 로직
+        return "loginFailure";
+    }
+}

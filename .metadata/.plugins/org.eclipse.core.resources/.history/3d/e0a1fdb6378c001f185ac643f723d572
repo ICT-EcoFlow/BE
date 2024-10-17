@@ -1,0 +1,41 @@
+package com.example.demo.Service;
+
+import java.util.List;
+
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+
+import com.example.demo.Entity.UserEntity;
+import com.example.demo.Map.StatEntity;
+import com.example.demo.Map.StatRepository;
+import com.example.demo.Repository.UserRepository;
+
+
+@Service
+public class StatCheckService {
+
+    private final StatRepository statRepository;
+    private final PhoneService phoneService;
+    private final UserRepository userRepository;
+
+    public StatCheckService(StatRepository statRepository, PhoneService phoneService) {
+        this.statRepository = statRepository;
+        this.phoneService = phoneService;
+    }
+
+    // 5분마다 실행되는 스케줄러 (밀리초 단위: 300000ms = 5분)
+    @Scheduled(fixedRate = 300000)
+    public void checkStatChange() {
+        // stat이 3에서 2로 바뀐 StatEntity들을 조회
+        List<StatEntity> changedStats = statRepository.findByStatChangedFrom3To2();
+
+        for (StatEntity stat : changedStats) {
+            // 유저의 phone 번호를 가져온다 (username으로 조회)
+            UserEntity user = userRepository.findByUsername(stat.getUsername());
+            if (user != null) {
+                // 문자를 발송한다
+                phoneService.sendOne3(user.getPhone());
+            }
+        }
+    }
+}

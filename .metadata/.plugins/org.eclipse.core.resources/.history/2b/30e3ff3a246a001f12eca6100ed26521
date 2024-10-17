@@ -1,0 +1,45 @@
+package com.example.demo.Chat;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
+@Service
+public class ChatGptService {
+
+    @Value("${openai.api.key}")
+    private String key;
+
+    public String getChatGptResponse(String message) {
+        RestTemplate restTemplate = new RestTemplate();
+
+        URI uri = UriComponentsBuilder
+                .fromUriString("https://api.openai.com/v1/chat/completions")
+                .build()
+                .encode()
+                .toUri();
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("Authorization", "Bearer " + key);
+
+        List<Message> list = new ArrayList<>();
+        list.add(new Message("user", message));
+
+        Body body = new Body("ft:gpt-3.5-turbo-1106:personal::9cGE81zd", list);
+
+        RequestEntity<Body> requestEntity = new RequestEntity<>(body, httpHeaders, HttpMethod.POST, uri);
+
+        ResponseEntity<ChatGptResponse> response = restTemplate.exchange(requestEntity, ChatGptResponse.class);
+
+        return response.getBody().getChoices().get(0).getMessage().getContent();
+    }
+}

@@ -1,0 +1,52 @@
+package com.example.demo.ChatGPT4o;
+
+import java.io.IOException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+@RestController
+@RequestMapping("/api")
+@RequiredArgsConstructor
+public class OpenAiAPIController {
+    private final AiCallService aiCallService;
+
+    @PostMapping("/image")
+    public String imageAnalysis(@RequestParam MultipartFile image, @RequestParam String requestText)
+            throws IOException {
+        ChatGPTResponse response = aiCallService.requestImageAnalysis(image, requestText);
+        return response.getChoices().get(0).getMessage().getContent();
+    }
+
+    @PostMapping("/text")
+    public String textAnalysis(@RequestParam String requestText) {
+        ChatGPTResponse response = aiCallService.requestTextAnalysis(requestText);
+        System.out.println(requestText.getClass());
+        return response.getChoices().get(0).getMessage().getContent();
+    }
+    
+    @PostMapping("/AiMap")
+    public String AiMap(@RequestParam double lat, @RequestParam double lng) {
+        // 위도와 경도를 이용해 질문을 생성
+        String question = "My current location is latitude " + lat + " and longitude " + lng + ". Can you recommend up to 5 nearby electric vehicle charging stations?한국어로 답해줘"; 
+        // ChatGPT에게 질문
+        ChatGPTResponse response = aiCallService.requestTextAnalysis(question);
+        // 응답에서 결과 추출 및 반환
+        return response.getChoices().get(0).getMessage().getContent();
+    }
+    
+    @PostMapping("/AiMap2")
+    public String AiMap2(@RequestParam double lat, @RequestParam double lng) {
+        // 위도와 경도를 이용해 질문을 생성
+        String question = "My current location is latitude " + lat + " and longitude " + lng + ". Can you recommend up to 5 nearby electric vehicle charging stations? 한국어로 답변해줘. 그냥 지역만 말해주고 다른말은 하지말아줘."; 
+        // ChatGPT에게 질문
+        ChatGPTResponse response = aiCallService.requestTextAnalysis(question);
+        // 응답에서 결과 추출 및 반환
+        return response.getChoices().get(0).getMessage().getContent();
+    }
+    
+    
+}

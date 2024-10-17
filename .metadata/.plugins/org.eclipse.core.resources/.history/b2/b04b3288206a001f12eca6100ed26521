@@ -1,0 +1,19 @@
+package com.example.demo.controller;
+
+import java.util.Map;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@Tag(name = "ECOFLOW API", description = "Swagger 테스트용 API")
+@RestController
+public class accountController {
+	
+	@GetMapping("/first")
+	public String accountController(){
+		
+		return "hi";
+		
+	}
+}

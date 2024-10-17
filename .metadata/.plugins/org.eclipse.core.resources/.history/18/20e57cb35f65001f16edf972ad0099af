@@ -1,0 +1,24 @@
+package com.example.demo.Main;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class LoginController {
+
+	@GetMapping("/login")
+	public String login(@RequestBody LoginRequest loginRequest) {
+        // 사용자 인증 로직 (예: 데이터베이스에서 사용자 확인)
+        boolean authenticated = authenticateUser(loginRequest.getUsername(), loginRequest.getPassword());
+
+        if (authenticated) {
+            return new LoginResponse("Success", "User logged in successfully");
+        } else {
+            return new LoginResponse("Failure", "Invalid username or password");
+        }
+	}
+	
+	
+}
+

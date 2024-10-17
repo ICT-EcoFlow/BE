@@ -1,0 +1,134 @@
+package com.example.demo.OAuth;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+import org.json.simple.JSONObject;
+import com.google.gson.JsonObject;
+
+import jakarta.servlet.http.HttpSession;
+
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.servlet.ModelAndView;
+
+@Controller
+@RequestMapping("/login/oauth/code")
+public class OAuthTestController {
+	
+	   @Autowired
+	    private MemberService memberService;
+	   
+	   
+    
+	@GetMapping("/naver")
+	@ResponseBody
+	public ModelAndView naverOAuthRedirect(@RequestParam String code, HttpSession session, @RequestParam String state, Model model) {
+	        // RestTemplate 인스턴스 생성
+	        RestTemplate rt = new RestTemplate();
+
+	        HttpHeaders accessTokenHeaders = new HttpHeaders();
+	        accessTokenHeaders.add("Content-type", "application/x-www-form-urlencoded");
+
+	        MultiValueMap<String, String> accessTokenParams = new LinkedMultiValueMap<>();
+	        accessTokenParams.add("grant_type", "authorization_code");
+	        accessTokenParams.add("client_id", "oyXEYOtxf3VQoLwn8uPZ");
+	        accessTokenParams.add("client_secret", "r1ZLbMWF1O");
+	        accessTokenParams.add("code" , code);	// 응답으로 받은 코드
+	        accessTokenParams.add("state" , state); // 응답으로 받은 상태
+
+	        HttpEntity<MultiValueMap<String, String>> accessTokenRequest = new HttpEntity<>(accessTokenParams, accessTokenHeaders);
+
+	        ResponseEntity<String> accessTokenResponse = rt.exchange(
+	                "https://nid.naver.com/oauth2.0/token",
+	                HttpMethod.POST,
+	                accessTokenRequest,
+	                String.class
+	        );
+	        
+	        
+
+	        // 이전에 받았던 Access Token 응답 
+	        ObjectMapper objectMapper = new ObjectMapper();
+	        
+	        // json -> 객체로 매핑하기 위해 NaverOauthParams 클래스 생성
+	        NaverOauthParams naverOauthParams = null;
+	        try {
+	            naverOauthParams = objectMapper.readValue(accessTokenResponse.getBody(), NaverOauthParams.class);
+	        } catch (JsonProcessingException e) {
+	            e.printStackTrace();
+	        }
+	        
+	        // header를 생성해서 access token을 넣어줍니다.
+	        HttpHeaders profileRequestHeader = new HttpHeaders();
+	        profileRequestHeader.add("Authorization", "Bearer " + naverOauthParams.getAccess_token());
+	        
+	        HttpEntity<HttpHeaders> profileHttpEntity = new HttpEntity<>(profileRequestHeader);
+	        
+	        // profile api로 생성해둔 헤더를 담아서 요청을 보냅니다.
+	        ResponseEntity<String> profileResponse = rt.exchange(
+	                "https://openapi.naver.com/v1/nid/me",
+	                HttpMethod.POST,
+	                profileHttpEntity,
+	                String.class
+	        );
+	        
+	        JSONParser parser = new JSONParser();
+	        JSONObject profileJson = null;
+	        try {
+	            profileJson = (JSONObject) parser.parse(profileResponse.getBody());
+	        } catch (ParseException e) {
+	            e.printStackTrace();
+	        }
+
+	        String id = (String) ((JSONObject) profileJson.get("response")).get("id");
+	        String email = (String) ((JSONObject) profileJson.get("response")).get("email");
+	        String name = (String) ((JSONObject) profileJson.get("response")).get("name");
+
+	        // 출력 또는 반환할 문자열 생성
+	        String result = "ID: " + id + ", Email: " + email + ", Name: " + name;
+
+	        System.out.println("ID: " + id);
+	        System.out.println("Email: " + email);
+	        System.out.println("Name: " + name);
+	   
+	        
+	        MemberDTO memberDTO = new MemberDTO();
+	        memberDTO.setId(id);
+	        memberDTO.setName(name);
+	        memberDTO.setMail(email);
+	        
+	        memberService.save(memberDTO);
+	        
+	        System.out.println(profileResponse.getBody());
+	        session.setAttribute("Id", memberDTO.getId());
+	        return new ModelAndView("redirect:/Home");	
+	        
+	        
+	    }
+
+
+}

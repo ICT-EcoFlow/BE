@@ -1,0 +1,59 @@
+package com.example.demo.Service;
+
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+
+import com.example.demo.Entity.UserEntity;
+import com.example.demo.Map.StatEntity;
+import com.example.demo.Map.StatRepository;
+import com.example.demo.Repository.UserRepository;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class StatCheckService {
+
+    private final StatRepository statRepository; // stat 값을 조회하기 위한 repository
+    private final UserRepository userRepository; // 유저 정보 조회를 위한 repository
+    private final PhoneService phoneService;     // 문자 발송을 위한 service
+
+    /**
+     * username과 stat id를 받아 stat 값이 2에서 3으로 변경되었는지 확인하고 문자를 발송하는 메서드
+     */
+    public boolean checkStatAndSendSms(String username, int statId) {
+        // stat 값 조회
+        StatEntity stat = statRepository.findById(statId).orElseThrow(() -> new IllegalArgumentException("Stat not found"));
+
+        // stat 값이 2에서 3으로 변경되었는지 확인
+        if ("2".equals(stat.getLastTsdt()) && "3".equals(stat.getStat())) {
+            // username을 통해서 phone 조회
+            UserEntity user = userRepository.findByUsername(username).orElseThrow(() -> new IllegalArgumentException("User not found"));
+            String phoneNumber = user.getPhone();
+
+            // 문자 발송
+            phoneService.sendOne3(phoneNumber);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 5분마다 모든 stat 값을 확인하는 스케줄러 메서드
+     */
+    @Scheduled(fixedRate = 30000) // 300,000밀리초 = 5분
+    public void checkAllStats() {
+        // 모든 stat 값을 조회하여 변경된 값을 처리
+        Iterable<StatEntity> statEntities = statRepository.findAll();
+        
+        for (StatEntity stat : statEntities) {
+            // 예시로 모든 유저에 대해 체크하는 로직 추가 (실제 로직은 특정 유저에 대해서만 할 수도 있음)
+            String statId = stat.getStatId();  // stat의 id를 사용하여 처리
+            String username = "exampleUser";   // 실제로는 유저 정보와 연결해서 처리
+
+            checkStatAndSendSms(username, stat.getId());
+        }
+    }
+}

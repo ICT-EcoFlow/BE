@@ -1,0 +1,32 @@
+package com.example.demo.controller;
+
+@RestController
+@RequestMapping("/chat")
+public class ChatController {
+
+    private final RestTemplate restTemplate;
+
+    @Autowired
+    public ChatController(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
+    @PostMapping("/gpt")
+    public ResponseEntity<ChatGPTResponse> getChatResponse(@RequestBody String prompt) {
+        // OpenAI API URL
+        String apiUrl = "https://api.openai.com/v1/engines/davinci/completions"; // 적절한 엔진과 URL로 변경
+
+        // ChatGPTRequest 객체 생성
+        ChatGPTRequest chatGPTRequest = new ChatGPTRequest("davinci", prompt);
+
+        // 요청 보내기
+        ChatGPTResponse response = restTemplate.postForObject(apiUrl, chatGPTRequest, ChatGPTResponse.class);
+
+        // 응답 반환
+        if (response != null) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(500).build(); // 에러 발생 시 500 반환
+        }
+    }
+}

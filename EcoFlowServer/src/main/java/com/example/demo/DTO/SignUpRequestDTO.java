@@ -1,0 +1,22 @@
+package com.example.demo.DTO;
+
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+@Setter
+@ToString
+public class SignUpRequestDTO {
+    private String username;
+    private String password;
+	private String nickname;
+    private String car;
+    private String carnumber;
+    private String phone;
+    
+
+}

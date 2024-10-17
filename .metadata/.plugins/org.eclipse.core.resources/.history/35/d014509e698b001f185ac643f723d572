@@ -1,0 +1,62 @@
+package com.example.demo.controller;
+
+
+
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import com.example.demo.DTO.PhoneRequestDto;
+import com.example.demo.DTO.UserchergerDTO;
+import com.example.demo.DTO.UserchergerPhoneRequestDto;
+import com.example.demo.Entity.Phone;
+import com.example.demo.Service.PhoneService;
+import com.example.demo.Service.UserchergerService;
+
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/auth")
+@RequiredArgsConstructor
+@Slf4j
+@Tag(name = "핸드폰 인증", description = "JWT권한 없음. -없이 번호만 입력")
+public class PhoneController {
+
+    private final PhoneService phoneService;
+    private final UserchergerService userchergerService;
+    
+    @Autowired
+    Phone phones;
+
+    @PostMapping("/phonecheck")
+    public ResponseEntity<?> phonecheck1(@RequestBody PhoneRequestDto phoneRequestDto) { // 'String' 제거
+        phoneService.sendOne(phoneRequestDto.getPhone());
+        phones.setPhoneNumber(phoneRequestDto.getPhone());
+        System.out.println(phones.getPhoneNumber() + "받아옴");
+        return ResponseEntity.ok(Map.of(
+                "message", "인증 번호가 성공적으로 발송되었습니다.",
+                "verifyCode", phones.getRand()
+        ));
+    }
+    
+    @PostMapping("/userchergersend")
+    public ResponseEntity<?> booking(@RequestBody UserchergerPhoneRequestDto userchergerphoneRequestDto) { // 'String' 제거
+
+    	
+    	List<UserchergerDTO> userChargerList = userchergerService.getUserChargerById(userchergerphoneRequestDto.getId());
+    	
+    	 String busiCall = userChargerList.get(0).getBusiCall();
+    	 phoneService.sendOne(busiCall);
+    	 
+    	
+        return ResponseEntity.ok(Map.of(
+                "message", "성공적으로 예약되었습니다."
+        ));
+    }
+
+
+}

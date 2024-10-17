@@ -1,0 +1,41 @@
+package com.example.demo.DTO;
+
+import java.util.List;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+
+@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+public class WeatherDTO {
+    private List<ForecastDay> forecastday;
+
+    // Getters and Setters
+
+    public static class ForecastDay {
+        private String date;
+        private Day day;
+
+        // Getters and Setters
+
+        public static class Day {
+            private double maxtemp_c;
+            private double mintemp_c;
+            private Condition condition;
+
+            // Getters and Setters
+
+            public static class Condition {
+                private String text;
+                private String icon;
+
+                // Getters and Setters
+            }
+        }
+    }
+}

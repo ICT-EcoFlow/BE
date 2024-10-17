@@ -1,0 +1,36 @@
+package com.example.demo.controller;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+import com.example.demo.Chat.*;
+
+@RestController
+@RequestMapping("/chat")
+public class ChatController {
+
+    @Value("${openai.model}")
+    private String model;
+
+    @Value("${openai.api.url}")
+    private String apiURL;
+
+    private final RestTemplate restTemplate;
+
+    public ChatController(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
+    @PostMapping("/message")
+    public ResponseEntity<ChatGPTResponse> sendMessage(@RequestBody ChatMessage chatMessage) {
+        // 받은 메시지를 이용해 ChatGPTRequest 객체 생성
+        ChatGPTRequest request = new ChatGPTRequest(model, chatMessage.getUser());
+
+        // OpenAI API에 요청 전송
+        ResponseEntity<ChatGPTResponse> response = restTemplate.postForEntity(apiURL, request, ChatGPTResponse.class);
+
+        // OpenAI API의 응답 반환
+        return response;
+    }
+}

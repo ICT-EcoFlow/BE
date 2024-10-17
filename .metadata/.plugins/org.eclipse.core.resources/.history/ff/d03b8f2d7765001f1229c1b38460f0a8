@@ -1,0 +1,33 @@
+package com.example.demo.Service;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.example.demo.DTO.WeatherDTO;
+import com.example.demo.Entity.WeatherApiResponse;
+
+@Service
+public class WeatherService {
+
+    @Value("${weather.api.key}")
+    private String apiKey;
+
+    private final RestTemplate restTemplate;
+
+    public WeatherService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
+    public WeatherDTO getWeeklyWeather(String location) {
+        String url = String.format("https://api.weatherapi.com/v1/forecast.json?key=%s&q=%s&days=7", apiKey, location);
+        System.out.println("Request URL: " + url); // 디버깅용 로그
+        WeatherApiResponse response = restTemplate.getForObject(url, WeatherApiResponse.class);
+
+        // Extract relevant data
+        if (response != null && response.getForecast() != null) {
+            return response.getForecast();
+        }
+        return null;
+    }
+}

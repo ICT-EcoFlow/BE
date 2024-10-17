@@ -1,0 +1,42 @@
+package com.example.demo.Chat;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+public class ChatMessage {
+    
+    private String user;
+    private String gpt;
+    
+    public ChatMessage(String user, String gpt) {
+        this.user = user;
+        this.gpt = gpt;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public String getGpt() {
+        return gpt;
+    }
+
+    public void setGpt(String gpt) {
+        this.gpt = gpt;
+    }
+    
+    @Override
+    public String toString() {
+        return gpt;
+    }
+
+
+
+}

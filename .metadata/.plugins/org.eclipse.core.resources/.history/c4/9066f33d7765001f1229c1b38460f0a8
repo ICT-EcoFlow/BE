@@ -1,0 +1,40 @@
+package com.example.demo.controller;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.demo.DTO.WeatherDTO;
+import com.example.demo.Service.WeatherService;
+
+@RestController
+public class WeatherController {
+
+    private final WeatherService weatherService;
+
+    public WeatherController(WeatherService weatherService) {
+        this.weatherService = weatherService;
+    }
+
+    @GetMapping("/weather/weekly")
+    public ResponseEntity<?> getWeeklyWeather(@RequestParam String location) {
+        WeatherDTO weatherDTO = weatherService.getWeeklyWeather(location);
+        if (weatherDTO != null) {
+            return ResponseEntity.ok(new ApiResponse("Success", weatherDTO));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse("Failed", "Weather data not found"));
+        }
+    }
+
+    @GetMapping("/weather/today")
+    public ResponseEntity<?> getTodayWeather(@RequestParam String location) {
+        WeatherDTO.ForecastDay todayWeather = weatherService.getTodayWeather(location);
+        if (todayWeather != null) {
+            return ResponseEntity.ok(new ApiResponse("Success", todayWeather));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse("Failed", "Today's weather data not found"));
+        }
+    }
+}
