@@ -22,6 +22,13 @@
 
 <br />
 
+### 프로젝트 정보
+|요약|
+|:---:|
+|<img src="https://github.com/ICT-EcoFlow/image/blob/main/%EC%9A%94%EC%95%BD%EB%B3%B8.png?raw=true" width="100%"/>|
+
+<br />
+
 ## 멘토
 - 김태은 멘토(딜로이트 안진회계법인)
 
@@ -29,25 +36,45 @@
 
 
 ### 화면 구성(요약)
+|첫화면|
+|:---:|
+|<img src="https://github.com/ICT-EcoFlow/image/blob/main/%EC%8B%9C%EC%9E%91.png?raw=true" width="100%"/>|
+
+|회원가입|
+|:---:|
+|<img src="https://github.com/ICT-EcoFlow/image/blob/main/%ED%9A%8C%EC%9B%90%EA%B0%80%EC%9E%85.png?raw=true" width="100%"/>|
+
 |로그인|
 |:---:|
-|<img src="https://github.com/leedongguk/SW-Acadamy-Project/blob/main/image/Login.png?raw=true" width="100%"/>|
+|<img src="https://github.com/ICT-EcoFlow/image/blob/main/%EB%A1%9C%EA%B7%B8%EC%9D%B8.png?raw=true" width="100%"/>|
 
 |홈화면|
 |:---:|
-|<img src="https://github.com/leedongguk/SW-Acadamy-Project/blob/main/image/홈화면.png?raw=true" width="100%"/>|
-
-|본인인증|
-|:---:|
-|<img src="https://github.com/leedongguk/SW-Acadamy-Project/blob/main/image/본인인증2.png?raw=true" width="100%"/>|
-
-|충전소|
-|:---:|
-|<img src="https://github.com/leedongguk/SW-Acadamy-Project/blob/main/image/충전소.png?raw=true" width="100%"/>|
+|<img src="https://github.com/ICT-EcoFlow/image/blob/main/%ED%99%88%ED%99%94%EB%A9%B43.png?raw=true" width="100%"/>|
 
 |AIChatBot|
 |:---:|
-|<img src="https://github.com/leedongguk/SW-Acadamy-Project/blob/main/image/AiChat.png?raw=true" width="100%"/>|
+|<img src="https://github.com/ICT-EcoFlow/image/blob/main/ai%20chat.png?raw=true" width="100%"/>|
+
+|마이페이|
+|:---:|
+|<img src="https://github.com/ICT-EcoFlow/image/blob/main/%EA%B0%9C%EC%9D%B8%ED%8E%98%EC%9D%B4%EC%A7%80.png?raw=true" width="100%"/>|
+
+|사업자 등록번호 입력|
+|:---:|
+|<img src="https://github.com/ICT-EcoFlow/image/blob/main/%EC%82%AC%EC%97%85%EC%9E%90%EB%93%B1%EB%A1%9D%EB%B2%88%ED%98%B8%20%EC%9D%B8%EC%A6%9D.png?raw=true" width="100%"/>|
+
+|개인충전기 등록|
+|:---:|
+|<img src="https://github.com/ICT-EcoFlow/image/blob/main/%EC%82%AC%EC%97%85%EC%9E%90%EB%93%B1%EB%A1%9D%EB%B2%88%ED%98%B8%20%EC%9D%B8%EC%A6%9D.png?raw=true" width="100%"/>|
+
+|개인충전기 관리|
+|:---:|
+|<img src="https://github.com/ICT-EcoFlow/image/blob/main/%EA%B0%9C%EC%9D%B8%EC%B6%A9%EC%A0%84%EA%B8%B0%20%EA%B4%80%EB%A6%AC.png?raw=true" width="100%"/>|
+
+||
+|:---:|
+|<img src="https://github.com/ICT-EcoFlow/image/blob/main/%EB%A7%B5.png?raw=true" width="100%"/>|
 
 <br />
 
@@ -60,6 +87,8 @@
 <img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/SpringBoot.png?raw=true" width="80">
 <img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/SpringDataJPA.png?raw=true" width="80">
 <img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/Mysql.png?raw=true" width="80">
+<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/Swagger.png?raw=true" width="80">
+  <img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/SpringSecurity.png?raw=true" width="80">
 </div>
 
 ### Infra
