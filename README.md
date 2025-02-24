@@ -66,7 +66,7 @@
 
 |개인충전기 등록|
 |:---:|
-|<img src="https://github.com/ICT-EcoFlow/image/blob/main/%EC%82%AC%EC%97%85%EC%9E%90%EB%93%B1%EB%A1%9D%EB%B2%88%ED%98%B8%20%EC%9D%B8%EC%A6%9D.png?raw=true" width="100%"/>|
+|<img src="https://github.com/ICT-EcoFlow/image/blob/main/%EA%B0%9C%EC%9D%B8%EC%B6%A9%EC%A0%84%EA%B8%B0%20%EB%93%B1%EB%A1%9D.png?raw=true" width="100%"/>|
 
 |개인충전기 관리|
 |:---:|
